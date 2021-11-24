@@ -11,17 +11,25 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text PlayerNameText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
+    
+    private GameObject nameHolder;
+    public string playerName;
 
     
     // Start is called before the first frame update
     void Start()
     {
+        nameHolder = GameObject.FindGameObjectWithTag("NameHolder");
+        playerName = nameHolder.GetComponent<NameHolder>().playerName;
+        Debug.Log(playerName);
+        PlayerNameText.text = "Player: " + playerName;
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
