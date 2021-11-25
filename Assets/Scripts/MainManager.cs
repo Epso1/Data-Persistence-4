@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public Text PlayerNameText;
+    public Text BestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -22,14 +24,17 @@ public class MainManager : MonoBehaviour
     private GameObject nameHolder;
     public string playerName;
 
-    
+    public int bestScore;
+    public string bestPlayer;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        LoadBestScore();
         nameHolder = GameObject.FindGameObjectWithTag("NameHolder");
         playerName = nameHolder.GetComponent<NameHolder>().playerName;
-        Debug.Log(playerName);
-        PlayerNameText.text = "Player: " + playerName;
+        PlayerNameText.text = "Player : " + playerName;
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -48,6 +53,11 @@ public class MainManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.KeypadMinus))
+        {
+            bestScore = 0;
+        }
+        Debug.Log(bestPlayer);
         if (!m_Started)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -68,12 +78,22 @@ public class MainManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
+
+        if (m_Points > bestScore)
+        {
+            bestScore = m_Points;
+            bestPlayer = playerName;
+            SaveBestScore();
+            BestScoreText.text = "Best Score : " + bestScore + " Name : " + bestPlayer;
+        }
+        
     }
 
     void AddPoint(int point)
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+       
     }
 
     public void GameOver()
@@ -81,4 +101,37 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
+
+
+
+    [System.Serializable]
+    class SaveData
+    {
+        public int BestScore;
+        public string BestPlayer;
+    }
+
+    public void SaveBestScore()
+    {
+        SaveData data = new SaveData();
+        data.BestScore = bestScore;
+        data.BestPlayer = playerName;      
+
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+    public void LoadBestScore()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+            bestScore = data.BestScore;
+            bestPlayer = data.BestPlayer;
+            BestScoreText.text = "Best Score : " + bestScore + " Name : " + bestPlayer;
+        }
+    }
+
 }

@@ -503,8 +503,10 @@ MonoBehaviour:
   Ball: {fileID: 177912862}
   ScoreText: {fileID: 188020406}
   PlayerNameText: {fileID: 2055549371}
+  BestScoreText: {fileID: 2078529056}
   GameOverText: {fileID: 474497238}
   playerName: 
+  BestScore: 0
 --- !u!1 &455529321
 GameObject:
   m_ObjectHideFlags: 0

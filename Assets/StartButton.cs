@@ -14,7 +14,7 @@ public class StartButton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(nameHolder.playerName);
+       
     }
     public void StartGame()
     {
